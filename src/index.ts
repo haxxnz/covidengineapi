@@ -1,13 +1,14 @@
-import express from 'express'
+import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 require('dotenv').config()
 
-const app = express()
+const app: Application = express()
 const port = 3001
 
 app.use(cors())
 app.use(morgan('dev'))
+
 app.get('/', (req, res) => {
   res.send('Hello covidengineapi! test')
 })
