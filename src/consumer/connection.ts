@@ -1,16 +1,12 @@
 import { Consumer } from 'kafkajs';
 
+import { handleSingeMessage, handleBatchMessage } from './handle';
+
 export async function runConsumer(covidConsumer: Consumer): Promise<void> {
   await covidConsumer.connect();
   await covidConsumer.subscribe({ topic: 'govhack-covid_cases_postcode', fromBeginning: true });
   await covidConsumer.run({
-    eachMessage: async ({ topic, partition, message }) => {
-      console.log({
-        key: message.key.toString(),
-        value: message?.value?.toString(),
-        headers: message.headers,
-      });
-      throw new Error("Shit man"); // Throw error so that it doesn't commit offset
-    },
+    eachMessage: handleSingeMessage,
+    eachBatch: handleBatchMessage,
   });
 }
