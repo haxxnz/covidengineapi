@@ -8,7 +8,7 @@ const port = 3001
 app.use(cors())
 app.use(morgan('dev'))
 app.get('/', (req, res) => {
-  res.send('Hello covidengineapi!')
+  res.send('Hello covidengineapi! test')
 })
 
 app.listen(port, () => {
