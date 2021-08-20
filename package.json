@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node-dev --transpile-only --respawn --rs src",
     "prod": "ts-node --transpile-only src",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +15,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "kafkajs": "^1.15.0",
     "morgan": "^1.10.0",
     "ts-node": "^10.2.1",
     "typescript": "^4.3.5"
