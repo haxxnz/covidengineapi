@@ -3,8 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "start": "ts-node-dev --transpile-only --respawn --rs src"
+  },
   "keywords": [],
   "author": "",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "typescript": "^4.3.5"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^1.1.8"
+  }
 }
