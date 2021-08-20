@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH script
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id
+          chmod 600 ~/.ssh/id
+          ssh-keyscan -H 54.206.122.243 >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id ec2-user@54.206.122.243 << EOF
+            cd covidengineapi/
+            git reset --hard && git pull --rebase
+            rm -rf node_modules/ && yarn --frozen-lockfile --prod
+            pm2 restart covidengineapi
+          EOF
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
