@@ -113,7 +113,7 @@ export const reshapeANZData = (nzData: IReturnData, auData: IReturnData) => {
     let data: IMergedLocation = {
       id: loc.id,
       site: loc.venue,
-      location: loc.geocoded_address,
+      location: loc.geocoded_address.replace('??', ''),
       region: `${loc.suburb}, ${loc.state}`,
       information: loc.alert,
       coordinates: loc.coordinates,
