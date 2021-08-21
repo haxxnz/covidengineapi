@@ -85,7 +85,7 @@ export const handleANZExposureLocations = async (
   const rawNZData: IExposureData = await getNZExposureLocations()
   const nzData: IReturnData = reshapeNZData(rawNZData)
 
-  let combined = reshapeANZData(nzData, auData)
+  const combined = reshapeANZData(nzData, auData)
 
   return res.send(combined)
 }
