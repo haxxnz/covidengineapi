@@ -5,6 +5,7 @@
   "description": "",
   "scripts": {
     "start": "ts-node-dev --transpile-only --respawn --rs src",
+    "start:consumer": "ts-node-dev --transpile-only --respawn --rs src/consumer",
     "prod": "ts-node --transpile-only src",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "build": "tsc"
