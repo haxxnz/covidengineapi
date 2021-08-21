@@ -49,15 +49,18 @@ export function matchAlgorithm(
       for (let j = 0; j < i; j++) {
         relevant_tokens.push(tokens[j])
       }
+
       let str = relevant_tokens.join(' ')
-      relevant.push(str)
+      if (str.length > 3) {
+        relevant.push(str)
+      }
     }
 
     for (const str of relevant) {
       if (!str) {
         continue
       }
-      const regexp = new RegExp('.*' + str + '.*', 'i')
+      const regexp = new RegExp(str + '.*', 'i')
       for (const merch of Object.keys(merchants)) {
         const result = regexp.test(merch)
         if (result) {
