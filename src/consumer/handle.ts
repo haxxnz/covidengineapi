@@ -1,25 +1,29 @@
 import { EachMessagePayload } from 'kafkajs';
 
-// import { writeFileSync, readFileSync } from 'fs'
+import { upsertNewLocation } from '../db/covid_location'
 
-type CovidMessage = {
-  objectid: string
-  data_date: string
-  postcode: string
-  new: number | null
-  active: number | null
-  rate: number | null
-}
+export type CovidLocationMessage = {
+  objectid: string;
+  date: string;
+  postcode: string;
+  site: string;
+  venue: string;
+  geocoded_address: string;
+  suburb: string;
+  state?: any;
+  x: number;
+  y: number;
+  times: string;
+  alert: string;
+  detail: string;
+  status: string;
+  alert_type: string;
+  date_string: string;
+};
 
 export async function handleSingeMessage({ message }: EachMessagePayload) {
-  const messageValue: CovidMessage = JSON.parse(message?.value?.toString() || "")
-  console.log({
-    key: message.key.toString(),
-    value: message?.value?.toString(),
-    headers: message.headers,
-  });
+  const messageValue: CovidLocationMessage = JSON.parse(message?.value?.toString() || "");
 
-  // const file = JSON.parse(readFileSync('./location.json').toString())
-  // const extraContent = [...file, messageValue]
-  // writeFileSync('./location.json', Buffer.from(JSON.stringify(extraContent)))
+  await upsertNewLocation(messageValue)
+
 }

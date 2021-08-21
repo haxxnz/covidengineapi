@@ -1,8 +1,8 @@
+import Dotenv from 'dotenv'
+Dotenv.config()
 import { Kafka, SASLOptions } from 'kafkajs'
 import { runConsumer } from './connection'
-import Dotenv from 'dotenv'
 
-Dotenv.config()
 const { KAFKA_USERNAME, KAFKA_PASSWORD } = process.env
 
 const kafkaConfig = {
@@ -22,7 +22,7 @@ const ssl = !!sasl
 // This creates a client instance that is configured to connect to the Kafka broker provided by
 // the environment variable KAFKA_BOOTSTRAP_SERVER
 const kafka = new Kafka({
-  clientId: 'govhack-team-1449',
+  clientId: 'connect-4Square-172192',
   brokers: ['pkc-4vndj.australia-southeast1.gcp.confluent.cloud:9092'],
   ssl,
   retry: {
@@ -33,7 +33,7 @@ const kafka = new Kafka({
 
 // Lol
 const covidConsumer = kafka.consumer({
-  groupId: 'govhack-team-1449',
+  groupId: 'connect-4Square-172192',
 })
 
 runConsumer(covidConsumer)

@@ -11,11 +11,16 @@ export async function up(knex: Knex): Promise<void> {
     table.string('geocoded_address')
     table.string('suburb').nullable()
     table.string('state').nullable()
-    table.float('x').notNullable()
-    table.float('y').notNullable()
+    table.float('x').nullable() //shitty schema
+    table.float('y').nullable() //shitty schema
     table.string('alert')
-    table.string('alert_type')
+    table.string('times')
+    table.string('detail').nullable()
     table.string('status').notNullable()
+    table.string('alert_type')
+    table.string('date_string')
+    table.date('created_at')
+    table.date('updated_at')
   })
 }
 
