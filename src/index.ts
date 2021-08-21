@@ -6,7 +6,6 @@ import { AkahuClient, Paginated, Transaction } from 'akahu'
 import getExposureLocations from './ExposureLocations/GetExposureLocations'
 import './checkLocations'
 import { ensureConnectToDB } from './db'
-import { TransactionsResource } from 'akahu/dist/resources/transactions'
 
 const app: Application = express()
 const port = 3001
