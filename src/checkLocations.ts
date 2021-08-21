@@ -4,6 +4,7 @@ import { reshapeNZData } from './ExposureLocations/Helpers'
 import { ImpoverishedTransaction, matchAlgorithm } from './matching'
 
 export interface CSVLineBNZ {
+  Type: undefined
   Date: string
   Payee: string
   Particulars: string | number
@@ -17,6 +18,21 @@ export interface CSVLineANZ {
   Code: string
   Reference: string
   Date: string
+}
+
+export type CSVLine = CSVLineBNZ | CSVLineANZ
+
+export async function getLoisFromCsvData(data: CSVLine[]) {
+  if (data.length === 0) {
+    return []
+  }
+  if (data[0]) {
+    const firstLine = data[0]
+    if (firstLine.Type) {
+      return getLoisFromCsvDataANZ(data as CSVLineANZ[])
+    }
+    return getLoisFromCsvDataBNZ(data as CSVLineBNZ[])
+  }
 }
 
 export async function getLoisFromCsvDataBNZ(data: CSVLineBNZ[]) {

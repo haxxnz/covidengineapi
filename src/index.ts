@@ -14,7 +14,7 @@ import {
 } from './ExposureLocations/GetExposureLocations'
 import { reshapeNZData } from './ExposureLocations/Helpers'
 import { matchAlgorithm } from './matching'
-import { CSVLine, getLoisFromCsvData } from './checkLocations'
+import { CSVLine, CSVLineBNZ, getLoisFromCsvData } from './checkLocations'
 import neatCsv from 'neat-csv'
 
 const app: Application = express()
