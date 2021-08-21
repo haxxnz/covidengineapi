@@ -1,6 +1,5 @@
 <p align="center">
-  <!-- <img width=80% src="https://i.imgur.com/Kj6jT3R.png"/> -->
-  <img width=80% src="https://raw.githubusercontent.com/CovidEngine/covidengineapi/main/images/lenny-gif.gif?token=AKBCPD2YQOK6Q3LTADRHILLBEDFBG" >
+  <img src="https://raw.githubusercontent.com/CovidEngine/covidengineapi/main/images/lenny-animation.gif?token=AKBCPDYENU2VUMYZERWAKHDBEDFJK" >
 </p>
 
 <p align="center">
