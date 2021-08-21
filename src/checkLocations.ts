@@ -4,10 +4,17 @@ import { getNZExposureLocations } from './ExposureLocations/GetExposureLocations
 import { reshapeNZData } from './ExposureLocations/Helpers'
 import { ImpoverishedTransaction, matchAlgorithm } from './matching'
 
-async function main() {
+interface CSVLine {
+  Date: string
+  Payee: string
+  Particulars: string | number
+  Code: string | number
+}
+
+export async function getLoisFromCsvData(data: CSVLine[]) {
   const transactions: ImpoverishedTransaction[] = []
-  for (let i: number = 0; i < ccData.length; i++) {
-    const line = ccData[i]
+  for (let i: number = 0; i < data.length; i++) {
+    const line = data[i]
     const addr = `${line.Payee} ${line.Particulars}`
     const id = `${line.Date}-${line.Payee}-${line.Particulars}-${line.Code}`
 
@@ -24,5 +31,5 @@ async function main() {
   const lois = matchAlgorithm(transactions, reshapeNZData(exposureLocations))
   console.log(lois)
 }
-main()
+getLoisFromCsvData(ccData)
 
