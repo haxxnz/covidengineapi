@@ -1,6 +1,8 @@
 import { Kafka, SASLOptions } from 'kafkajs'
 import { runConsumer } from './connection'
+import Dotenv from 'dotenv'
 
+Dotenv.config()
 const { KAFKA_USERNAME, KAFKA_PASSWORD } = process.env
 
 const kafkaConfig = {

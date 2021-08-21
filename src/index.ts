@@ -1,17 +1,18 @@
+require('dotenv').config() // Load this shit otherwise the rest is fucked
 import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import { AkahuClient } from 'akahu'
 import getExposureLocations from './ExposureLocations/GetExposureLocations'
 import './checkLocations'
-require('dotenv').config()
+import { ensureConnectToDB } from './db'
 
 const app: Application = express()
 const port = 3001
 
 app.use(cors())
 app.use(morgan('dev'))
-
+ensureConnectToDB()
 app.get('/', (req, res) => {
   res.send('<a href="https://oauth.akahu.io/?client_id=app_token_cksl325vd000109mjaenwgicd&response_type=code&redirect_uri=https://oauth.covidengine.ml/auth/akahu&scope=ENDURING_CONSENT">Login with Akahu</a>')
 })
