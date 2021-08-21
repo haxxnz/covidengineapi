@@ -15,6 +15,10 @@ import {
 import { reshapeNZData } from './ExposureLocations/Helpers'
 import { matchAlgorithm } from './matching'
 
+import csv from 'csvtojson'
+import { CSVLine, getLoisFromCsvData } from './checkLocations'
+import neatCsv from 'neat-csv'
+
 const app: Application = express()
 const port = 3001
 
@@ -33,10 +37,18 @@ app.get('/locations', handleANZExposureLocations)
 app.get('/locations/nz', handleNZExposureLocations)
 app.get('/locations/au', handleAUExposureLocations)
 
-app.post('/uploadcsv', upload.single('csv'), (req, res) => {
-  const csv = req.file?.buffer.toString()
+app.post('/uploadcsv', upload.single('csv'), async (req, res) => {
+  const csvStr = req.file?.buffer.toString()
+  if (!csvStr) {
+    return res.send({ message: 'No file uploaded' })
+  }
+  console.log('csvStr', csvStr)
+
   const sessionUserId = req.body.sessionUserId
-  res.send(JSON.stringify({csv,sessionUserId}, null, 2))
+  const jsonObj = await neatCsv(csvStr)
+  console.log('jsonObj', jsonObj)
+  const lois = await getLoisFromCsvData(jsonObj as unknown as CSVLine[])
+  res.send(JSON.stringify({ lois, sessionUserId }, null, 2))
 })
 
 const akahuOAuthRedirectUri = 'https://oauth.covidengine.ml/auth/akahu'
