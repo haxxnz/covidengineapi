@@ -3,22 +3,22 @@ import moment from 'moment'
 import fetch from 'node-fetch'
 import { reshapeAUData, reshapeNZData } from './Helpers'
 
-let cache: any
+let nzCache: any
+let auCache: any
 
 /**
  * Fetches the Ministry of Health COVID-19 Exposure Sites
  * @returns Raw Exposure Data as JSON
  */
 export const getNZExposureLocations = async () => {
-  if (cache) {
-    return cache
-  }
+  if (nzCache) return nzCache
+
   try {
     const dataset = await fetch(
       'https://raw.githubusercontent.com/minhealthnz/nz-covid-data/main/locations-of-interest/august-2021/locations-of-interest.geojson'
     )
     const result = await dataset.json()
-    cache = result
+    nzCache = result
     return result
   } catch (ex) {
     console.log(ex)
@@ -31,11 +31,15 @@ export const getNZExposureLocations = async () => {
  * @returns Raw Exposure Data
  */
 const getAUExposureLocations = async () => {
+  if (auCache) return auCache
+
   try {
     const dataset = await fetch(
       'https://data.crisper.net.au/table/covid_contact_locations'
     )
-    return await dataset.json()
+    const result = await dataset.json()
+    auCache = result
+    return result
   } catch (ex) {
     console.log(ex)
     return []
@@ -117,8 +121,8 @@ export const reshapeANZData = (nzData: IReturnData, auData: IReturnData) => {
       region: `${loc.suburb}, ${loc.state}`,
       information: loc.alert,
       coordinates: loc.coordinates,
-      // start: parsedStart,
-      // end: parsedEnd,
+      start: loc.times,
+      end: loc.times,
       status: loc.status,
     }
     return data
@@ -130,8 +134,4 @@ export const reshapeANZData = (nzData: IReturnData, auData: IReturnData) => {
   }
 
   return anzData
-}
-
-const parseAUDate = (input: string) => {
-  // format
 }

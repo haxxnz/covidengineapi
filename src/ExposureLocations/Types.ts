@@ -76,8 +76,8 @@ interface IMergedLocation {
   site: string // Event and Venue,
   location: string // Location and Geocoded Address
   region: string // City and Suburb + State
-  start: Date // Date and Start
-  end: Date // Start & End and Times
+  start: Date | String // Date and Start
+  end: Date | String // Start & End and Times
   information: string // Information and Alert (maybe detail)
   coordinates: ICoordinates
   status: string // Status and 'Active'
