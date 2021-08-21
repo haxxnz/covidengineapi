@@ -14,8 +14,16 @@ export type LOI = {
   transactions: EnrichedTransaction[]
 }
 
+export interface ImpoverishedTransaction {
+  _id: string,
+  merchant: {
+    name: string;
+  };
+  date: string;
+}
+
 export function matchAlgorithm(
-  transactions: EnrichedTransaction[],
+  transactions: ImpoverishedTransaction[],
   locations: IReturnData
 ): LOI[] {
   const merchants: Record<string, string[]> = {}

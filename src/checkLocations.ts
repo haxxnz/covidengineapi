@@ -1,14 +1,28 @@
-import ccData from './ccData';
+import moment from 'moment'
+import ccData from './ccData'
+import { getNZExposureLocations } from './ExposureLocations/GetExposureLocations'
+import { reshapeNZData } from './ExposureLocations/Helpers'
+import { ImpoverishedTransaction, matchAlgorithm } from './matching'
 
-for(let i: number = 0; i < ccData.length; i++) {
+async function main() {
+  const transactions: ImpoverishedTransaction[] = []
+  for (let i: number = 0; i < ccData.length; i++) {
     const line = ccData[i]
-    // console.log(line)
     const addr = `${line.Payee} ${line.Particulars}`
-    console.log(addr)
+    const id = `${line.Date}-${line.Payee}-${line.Particulars}-${line.Code}`
+
+    const transaction = {
+      _id: id,
+      merchant: {
+        name: addr,
+      },
+      date: moment(line.Date, 'DD/MM/YYYY').toString(),
+    }
+    transactions.push(transaction)
+  }
+  const exposureLocations = await getNZExposureLocations()
+  const lois = matchAlgorithm(transactions, reshapeNZData(exposureLocations))
+  console.log(lois)
 }
+main()
 
-// console.log(ccData)
-
-
-// Payee: 'LAWSON CONVENIENCE STORE',
-// Particulars: 'AUCKLAND',
