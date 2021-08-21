@@ -45,6 +45,9 @@ interface ILocation {
   end: string
   information: string
   coordinates: ICoordinates
+  eventId: string
+  glnHash?: string
+  gln?: string
 }
 
 interface ICoordinates {

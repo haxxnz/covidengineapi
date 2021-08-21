@@ -1,13 +1,14 @@
 import moment from 'moment'
 import { NzExposureLocations } from './GetExposureLocations'
+import glnPairs from '../glns.json'
 
 /**
  * Reshape the data into a more friendly format
  * @param rawData Raw MoH dataset to parse
  * @returns Formatted Dataset, strictly typed
  */
-export const reshapeNZData = (data: NzExposureLocations): IReturnData => {
-  const rawData = data.result
+export const reshapeNZData = (nzExposureLocations: NzExposureLocations): IReturnData => {
+  const rawData = nzExposureLocations.result
   // No locations listed
   if (!rawData?.features) {
     return {
@@ -19,6 +20,11 @@ export const reshapeNZData = (data: NzExposureLocations): IReturnData => {
 
   // Build locations object
   const locations: ILocation[] = rawData.features.map((location: IFeature) => {
+    const glnHash = nzExposureLocations.exposureEventsResult.items.find(item => {
+      return item.eventId.startsWith(location.properties.id)
+    })?.glnHash
+    const gln = glnPairs.find(glnPair => glnPair.glnHash === glnHash)?.gln
+
     let data: ILocation = {
       id: location.properties.id,
       event: location.properties.Event,
@@ -27,6 +33,9 @@ export const reshapeNZData = (data: NzExposureLocations): IReturnData => {
       start: location.properties.Start,
       end: location.properties.End,
       information: location.properties.Information,
+      eventId: location.properties.id,
+      glnHash,
+      gln,
       coordinates: {
         lat: location.geometry.coordinates[0],
         lng: location.geometry.coordinates[1],
