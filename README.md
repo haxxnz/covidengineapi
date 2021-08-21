@@ -1,5 +1,5 @@
 <p align="center">
-  <img width=80% src="/images/lenny_banner2.png"/>
+  <img width=80% src="https://i.imgur.com/Kj6jT3R.png"/>
 </p>
 
 <p align="center">
