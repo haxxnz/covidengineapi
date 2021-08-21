@@ -18,6 +18,7 @@ jobs:
             git reset --hard && git pull --rebase
             rm -rf node_modules/ && yarn --frozen-lockfile --prod
             pm2 restart covidengineapi
+            pm2 restart consumer
           EOF
         shell: bash
         env:
