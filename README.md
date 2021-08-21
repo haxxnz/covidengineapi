@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/CovidEngine/covidengineapi/main/images/lenny-animation.gif?token=AKBCPDYENU2VUMYZERWAKHDBEDFJK" >
+  <img src="https://user-images.githubusercontent.com/2031472/130318125-57c2b1cd-caa1-4200-a62f-0c8339dff721.gif" >
 </p>
 
 <p align="center">
