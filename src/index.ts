@@ -14,8 +14,6 @@ import {
 } from './ExposureLocations/GetExposureLocations'
 import { reshapeNZData } from './ExposureLocations/Helpers'
 import { matchAlgorithm } from './matching'
-
-import csv from 'csvtojson'
 import { CSVLine, getLoisFromCsvData } from './checkLocations'
 import neatCsv from 'neat-csv'
 
