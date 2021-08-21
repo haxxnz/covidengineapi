@@ -2,6 +2,7 @@ import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import { AkahuClient } from 'akahu'
+import getExposureLocations from './ExposureLocations/GetExposureLocations'
 require('dotenv').config()
 
 const app: Application = express()
@@ -13,6 +14,8 @@ app.use(morgan('dev'))
 app.get('/', (req, res) => {
   res.send('Hello covidengineapi! test')
 })
+
+app.get('/locations', getExposureLocations)
 
 const akahuOAuthRedirectUri = 'https://oauth.covidengine.ml/auth/akahu'
 
