@@ -34,7 +34,9 @@ app.get('/locations/nz', handleNZExposureLocations)
 app.get('/locations/au', handleAUExposureLocations)
 
 app.post('/uploadcsv', upload.single('csv'), (req, res) => {
-  res.send(JSON.stringify(req.file?.buffer.toString(), null, 2))
+  const csv = req.file?.buffer.toString()
+  const sessionUserId = req.body.sessionUserId
+  res.send(JSON.stringify({csv,sessionUserId}, null, 2))
 })
 
 const akahuOAuthRedirectUri = 'https://oauth.covidengine.ml/auth/akahu'
