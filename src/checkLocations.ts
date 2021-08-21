@@ -1,5 +1,4 @@
 import moment from 'moment'
-import ccData from './ccData'
 import { getNZExposureLocations } from './ExposureLocations/GetExposureLocations'
 import { reshapeNZData } from './ExposureLocations/Helpers'
 import { ImpoverishedTransaction, matchAlgorithm } from './matching'
@@ -29,8 +28,6 @@ export async function getLoisFromCsvData(data: CSVLine[]) {
   }
   const exposureLocations = await getNZExposureLocations()
   const lois = matchAlgorithm(transactions, reshapeNZData(exposureLocations))
-  // console.log(lois)
   return lois
 }
-// getLoisFromCsvData(ccData)
 
