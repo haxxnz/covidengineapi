@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 /**
  * Reshape the data into a more friendly format
  * @param rawData Raw MoH dataset to parse
@@ -83,4 +85,49 @@ export const reshapeAUData = (rawData: Array<Array<any>>) => {
   }
 
   return formattedData
+}
+
+export const reshapeANZData = (nzData: IReturnData, auData: IReturnData) => {
+  let nzReshape = nzData?.locations?.map((loc: ILocation) => {
+    let parsedStart = moment(loc.start, 'DD/MM/YYYY, hh:mm a').toDate()
+    let parsedEnd = moment(loc.end, 'DD/MM/YYYY, hh:mm a').toDate()
+
+    let data: IMergedLocation = {
+      id: loc.id,
+      site: loc.event,
+      location: loc.location,
+      region: loc.city,
+      information: loc.information,
+      coordinates: loc.coordinates,
+      start: parsedStart,
+      end: parsedEnd,
+      status: 'active',
+    }
+    return data
+  })
+
+  let auReshape = auData?.locations?.map((loc: ICrisperData) => {
+    // let parsedStart = moment(loc.start, 'DD/MM/YYYY, hh:mm a').toDate()
+    // let parsedEnd = moment(loc.end, 'DD/MM/YYYY, hh:mm a').toDate()
+
+    let data: IMergedLocation = {
+      id: loc.id,
+      site: loc.venue,
+      location: loc.geocoded_address,
+      region: `${loc.suburb}, ${loc.state}`,
+      information: loc.alert,
+      coordinates: loc.coordinates,
+      start: loc.times,
+      end: loc.times,
+      status: loc.status,
+    }
+    return data
+  })
+
+  let anzData = {
+    nz: nzReshape,
+    au: auReshape,
+  }
+
+  return anzData
 }
