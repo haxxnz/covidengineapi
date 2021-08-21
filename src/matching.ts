@@ -11,7 +11,7 @@ export type LOI = {
   end: Date
   information: string
   coordinates: ICoordinates
-  transactions: EnrichedTransaction[]
+  transactions: ImpoverishedTransaction[]
 }
 
 export interface ImpoverishedTransaction {
