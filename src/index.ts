@@ -1,16 +1,19 @@
 require('dotenv').config() // Load this shit otherwise the rest is fucked
-import express, { Application } from 'express'
+import { AkahuClient, EnrichedTransaction, Paginated } from 'akahu'
 import cors from 'cors'
+import express, { Application } from 'express'
 import morgan from 'morgan'
-import { AkahuClient, EnrichedTransaction, Paginated, Transaction } from 'akahu'
-import getExposureLocations, {
-  fetchExposureLocations,
-  reshapeData,
-} from './ExposureLocations/GetExposureLocations'
+import multer from 'multer'
 import './checkLocations'
 import { ensureConnectToDB } from './db'
+import {
+  fetchExposureLocations,
+  handleANZExposureLocations,
+  handleAUExposureLocations,
+  handleNZExposureLocations,
+  reshapeData
+} from './ExposureLocations/GetExposureLocations'
 import { matchAlgorithm } from './matching'
-import multer from 'multer'
 
 const app: Application = express()
 const port = 3001
@@ -26,7 +29,9 @@ app.get('/', (req, res) => {
   )
 })
 
-app.get('/locations', getExposureLocations)
+app.get('/locations', handleANZExposureLocations)
+app.get('/locations/nz', handleNZExposureLocations)
+app.get('/locations/au', handleAUExposureLocations)
 
 app.post('/uploadcsv', upload.single('csv'), (req, res) => {
   res.send(JSON.stringify(req.file?.buffer.toString(), null, 2))

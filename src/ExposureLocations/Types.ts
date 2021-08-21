@@ -1,4 +1,4 @@
-type Nullable<T> = T | undefined | null;
+type Nullable<T> = T | undefined | null
 
 interface IExposureData {
   type?: string
@@ -32,7 +32,8 @@ interface IGeometry {
 interface IReturnData {
   type?: Nullable<string>
   name?: Nullable<string>
-  locations?: ILocation[]
+  country?: string
+  locations?: ILocation[] | ICrisperData[]
 }
 
 interface ILocation {
@@ -49,4 +50,35 @@ interface ILocation {
 interface ICoordinates {
   lat: number
   lng: number
+}
+
+interface ICrisperData {
+  id: string
+  date: string
+  postcode: string
+  site: string
+  venue: string
+  geocoded_address: string
+  suburb: string
+  state: string
+  coordinates: ICoordinates
+  times: string
+  alert: string
+  detail: string
+  status: string
+  alert_type: string
+  date_string: string
+  report_date: string
+}
+
+interface IMergedLocation {
+  id: string
+  site: string // Event and Venue,
+  location: string // Location and Geocoded Address
+  region: string // City and Suburb + State
+  start: Date // Date and Start
+  end: Date // Start & End and Times
+  information: string // Information and Alert (maybe detail)
+  coordinates: ICoordinates
+  status: string // Status and 'Active'
 }

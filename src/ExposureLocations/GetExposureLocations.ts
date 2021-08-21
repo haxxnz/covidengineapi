@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
+import moment from 'moment'
 import fetch from 'node-fetch'
+import { reshapeAUData, reshapeNZData } from './Helpers'
 
 let cache: any
 
@@ -7,10 +9,7 @@ let cache: any
  * Fetches the Ministry of Health COVID-19 Exposure Sites
  * @returns Raw Exposure Data as JSON
  */
-export const fetchExposureLocations = async () => {
-  if (cache) {
-    return cache
-  }
+const getNZExposureLocations = async () => {
   try {
     const dataset = await fetch(
       'https://raw.githubusercontent.com/minhealthnz/nz-covid-data/main/locations-of-interest/august-2021/locations-of-interest.geojson'
@@ -25,46 +24,32 @@ export const fetchExposureLocations = async () => {
 }
 
 /**
- * Reshape the data into a more friendly format
- * @param rawData Raw MoH dataset to parse
- * @returns Formatted Dataset, strictly typed
+ * Fetches the CRISPER Exposure Data (AU Gov)
+ * @returns Raw Exposure Data
  */
-export const reshapeData = (rawData: IExposureData): IReturnData => {
-  // No locations listed
-  if (!rawData?.features) {
-    return {
-      name: rawData.name || null,
-      type: rawData.type || null,
-      locations: [],
-    }
+const getAUExposureLocations = async () => {
+  try {
+    const dataset = await fetch(
+      'https://data.crisper.net.au/table/covid_contact_locations'
+    )
+    return await dataset.json()
+  } catch (ex) {
+    console.log(ex)
+    return []
   }
+}
 
-  // Build locations object
-  const locations: ILocation[] = rawData.features.map((location: IFeature) => {
-    let data: ILocation = {
-      id: location.properties.id,
-      event: location.properties.Event,
-      location: location.properties.Location,
-      city: location.properties.City,
-      start: location.properties.Start,
-      end: location.properties.End,
-      information: location.properties.Information,
-      coordinates: {
-        lat: location.geometry.coordinates[0],
-        lng: location.geometry.coordinates[1],
-      },
-    }
-    return data
-  })
+// Route Handlers
 
-  // Output Schema
-  const formattedData: IReturnData = {
-    name: rawData.name || null,
-    type: rawData.type || null,
-    locations,
-  }
+export const handleAUExposureLocations = async (
+  req: Request,
+  res: Response
+) => {
+  const rawAUData: Array<Array<any>> = await getAUExposureLocations()
+  const auData: IReturnData = reshapeAUData(rawAUData)
+  // let output: IReturnData = reshapeData(rawData)
 
-  return formattedData
+  return res.send(auData)
 }
 
 /**
@@ -73,11 +58,77 @@ export const reshapeData = (rawData: IExposureData): IReturnData => {
  * @param res Express Response Object
  * @returns Friendly-formatted list of Exposure Locations
  */
-const getExposureLocations = async (req: Request, res: Response) => {
-  const rawData: IExposureData = await fetchExposureLocations()
-  let output: IReturnData = reshapeData(rawData)
+export const handleNZExposureLocations = async (
+  req: Request,
+  res: Response
+) => {
+  const rawNZData: IExposureData = await getNZExposureLocations()
+  const nzData: IReturnData = reshapeNZData(rawNZData)
 
-  return res.send(output)
+  return res.send(nzData)
 }
 
-export default getExposureLocations
+export const handleANZExposureLocations = async (
+  req: Request,
+  res: Response
+) => {
+  // Get Exposure Sites and shape data
+  const rawAUData: Array<Array<any>> = await getAUExposureLocations()
+  const auData: IReturnData = reshapeAUData(rawAUData)
+
+  const rawNZData: IExposureData = await getNZExposureLocations()
+  const nzData: IReturnData = reshapeNZData(rawNZData)
+
+  let combined = reshapeANZData(nzData, auData)
+
+  return res.send(combined)
+}
+
+export const reshapeANZData = (nzData: IReturnData, auData: IReturnData) => {
+  let nzReshape = nzData?.locations?.map((loc: ILocation) => {
+    let parsedStart = moment(loc.start, 'DD/MM/YYYY, hh:mm a').toDate()
+    let parsedEnd = moment(loc.end, 'DD/MM/YYYY, hh:mm a').toDate()
+
+    let data: IMergedLocation = {
+      id: loc.id,
+      site: loc.event,
+      location: loc.location,
+      region: loc.city,
+      information: loc.information,
+      coordinates: loc.coordinates,
+      start: parsedStart,
+      end: parsedEnd,
+      status: 'active',
+    }
+    return data
+  })
+
+  let auReshape = auData?.locations?.map((loc: ICrisperData) => {
+    // let parsedStart = moment(loc.start, 'DD/MM/YYYY, hh:mm a').toDate()
+    // let parsedEnd = moment(loc.end, 'DD/MM/YYYY, hh:mm a').toDate()
+
+    let data: IMergedLocation = {
+      id: loc.id,
+      site: loc.venue,
+      location: loc.geocoded_address,
+      region: `${loc.suburb}, ${loc.state}`,
+      information: loc.alert,
+      coordinates: loc.coordinates,
+      // start: parsedStart,
+      // end: parsedEnd,
+      status: loc.status,
+    }
+    return data
+  })
+
+  let anzData = {
+    nz: nzReshape,
+    au: auReshape
+  }
+
+  return anzData
+}
+
+const parseAUDate = (input: string) => {
+  // format
+}
