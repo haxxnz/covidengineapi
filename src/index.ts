@@ -2,10 +2,11 @@ require('dotenv').config() // Load this shit otherwise the rest is fucked
 import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
-import { AkahuClient } from 'akahu'
+import { AkahuClient, Paginated, Transaction } from 'akahu'
 import getExposureLocations from './ExposureLocations/GetExposureLocations'
 import './checkLocations'
 import { ensureConnectToDB } from './db'
+import { TransactionsResource } from 'akahu/dist/resources/transactions'
 
 const app: Application = express()
 const port = 3001
@@ -14,7 +15,9 @@ app.use(cors())
 app.use(morgan('dev'))
 ensureConnectToDB()
 app.get('/', (req, res) => {
-  res.send('<a href="https://oauth.akahu.io/?client_id=app_token_cksl325vd000109mjaenwgicd&response_type=code&redirect_uri=https://oauth.covidengine.ml/auth/akahu&scope=ENDURING_CONSENT">Login with Akahu</a>')
+  res.send(
+    '<a href="https://oauth.akahu.io/?client_id=app_token_cksl325vd000109mjaenwgicd&response_type=code&redirect_uri=https://oauth.covidengine.ml/auth/akahu&scope=ENDURING_CONSENT">Login with Akahu</a>'
+  )
 })
 
 app.get('/locations', getExposureLocations)
@@ -48,11 +51,41 @@ app.get('/auth/akahu', async (req, res) => {
     const user = await akahu.users.get(access_token)
     const accounts = await akahu.accounts.list(access_token)
 
+    const all_transactions: Transaction[] = []
+
+    for (const account of accounts) {
+      // since we're only getting 2 weeks unlikely we need to page
+
+      let transactions: Paginated<Transaction>
+      let next: string | undefined
+      do {
+        transactions = await akahu.accounts.listTransactions(
+          access_token,
+          account._id,
+          {
+            start: new Date().toISOString(),
+            end: new Date().toISOString(),
+            cursor: next,
+          }
+        )
+
+        // typing is broken here, next should be string | undefined but its string | null
+        if (!transactions.cursor.next) {
+          next = undefined
+        } else {
+          next = transactions.cursor.next
+        }
+
+        all_transactions.push(...transactions.items)
+      } while (transactions.cursor.next)
+    }
+
     res.type('json').send(
       JSON.stringify(
         {
           user,
           accounts,
+          transactions: all_transactions,
         },
         null,
         2
