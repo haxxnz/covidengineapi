@@ -7,12 +7,12 @@ import multer from 'multer'
 import './checkLocations'
 import { ensureConnectToDB } from './db'
 import {
-  fetchExposureLocations,
+  getNZExposureLocations,
   handleANZExposureLocations,
   handleAUExposureLocations,
   handleNZExposureLocations,
-  reshapeData
 } from './ExposureLocations/GetExposureLocations'
+import { reshapeNZData } from './ExposureLocations/Helpers'
 import { matchAlgorithm } from './matching'
 
 const app: Application = express()
@@ -105,11 +105,11 @@ app.get('/auth/akahu', async (req, res) => {
       })
     )
 
-    const exposureLocations = await fetchExposureLocations()
+    const exposureLocations = await getNZExposureLocations()
 
     const lois = matchAlgorithm(
       all_transactions,
-      reshapeData(exposureLocations)
+      reshapeNZData(exposureLocations)
     )
 
     res.type('json').send(

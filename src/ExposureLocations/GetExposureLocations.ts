@@ -9,7 +9,10 @@ let cache: any
  * Fetches the Ministry of Health COVID-19 Exposure Sites
  * @returns Raw Exposure Data as JSON
  */
-const getNZExposureLocations = async () => {
+export const getNZExposureLocations = async () => {
+  if (cache) {
+    return cache
+  }
   try {
     const dataset = await fetch(
       'https://raw.githubusercontent.com/minhealthnz/nz-covid-data/main/locations-of-interest/august-2021/locations-of-interest.geojson'
@@ -123,7 +126,7 @@ export const reshapeANZData = (nzData: IReturnData, auData: IReturnData) => {
 
   let anzData = {
     nz: nzReshape,
-    au: auReshape
+    au: auReshape,
   }
 
   return anzData
