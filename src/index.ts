@@ -13,7 +13,7 @@ app.use(cors())
 app.use(morgan('dev'))
 
 app.get('/', (req, res) => {
-  res.send('Hello covidengineapi! test')
+  res.send('<a href="https://oauth.akahu.io/?client_id=app_token_cksl325vd000109mjaenwgicd&response_type=code&redirect_uri=https://oauth.covidengine.ml/auth/akahu&scope=ENDURING_CONSENT">Login with Akahu</a>')
 })
 
 app.get('/locations', getExposureLocations)
