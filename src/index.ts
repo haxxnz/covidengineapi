@@ -2,10 +2,14 @@ require('dotenv').config() // Load this shit otherwise the rest is fucked
 import express, { Application } from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
-import { AkahuClient, Paginated, Transaction } from 'akahu'
-import getExposureLocations from './ExposureLocations/GetExposureLocations'
+import { AkahuClient, EnrichedTransaction, Paginated, Transaction } from 'akahu'
+import getExposureLocations, {
+  fetchExposureLocations,
+  reshapeData,
+} from './ExposureLocations/GetExposureLocations'
 import './checkLocations'
 import { ensureConnectToDB } from './db'
+import { matchAlgorithm } from './matching'
 
 const app: Application = express()
 const port = 3001
@@ -59,13 +63,14 @@ app.get('/auth/akahu', async (req, res) => {
     const now = new Date()
     const two_weeks_ago = minusDaysFromNow(14)
 
-    const all_transactions = await Promise.all(
-      accounts.flatMap(async (account) => {
+    const all_transactions: EnrichedTransaction[] = []
+    await Promise.all(
+      accounts.map(async (account) => {
         const transactions_paged = []
-        let transactions: Paginated<Transaction>
+        let transactions: Paginated<EnrichedTransaction>
         let next: string | undefined
         do {
-          transactions = await akahu.accounts.listTransactions(
+          transactions = (await akahu.accounts.listTransactions(
             access_token,
             account._id,
             {
@@ -73,7 +78,7 @@ app.get('/auth/akahu', async (req, res) => {
               end: now.toISOString(),
               cursor: next,
             }
-          )
+          )) as any
 
           // typing is broken here, next should be string | undefined but its string | null
           if (!transactions.cursor.next) {
@@ -84,16 +89,22 @@ app.get('/auth/akahu', async (req, res) => {
 
           transactions_paged.push(...transactions.items)
         } while (transactions.cursor.next)
-        return transactions_paged
+        all_transactions.push(...transactions_paged)
       })
+    )
+
+    const exposureLocations = await fetchExposureLocations()
+
+    const lois = matchAlgorithm(
+      all_transactions,
+      reshapeData(exposureLocations)
     )
 
     res.type('json').send(
       JSON.stringify(
         {
           user,
-          accounts,
-          transactions: all_transactions,
+          lois,
         },
         null,
         2

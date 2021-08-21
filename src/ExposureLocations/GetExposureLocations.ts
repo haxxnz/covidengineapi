@@ -1,16 +1,23 @@
 import { Request, Response } from 'express'
 import fetch from 'node-fetch'
 
+let cache: any
+
 /**
  * Fetches the Ministry of Health COVID-19 Exposure Sites
  * @returns Raw Exposure Data as JSON
  */
-const fetchExposureLocations = async () => {
+export const fetchExposureLocations = async () => {
+  if (cache) {
+    return cache
+  }
   try {
     const dataset = await fetch(
       'https://raw.githubusercontent.com/minhealthnz/nz-covid-data/main/locations-of-interest/august-2021/locations-of-interest.geojson'
     )
-    return await dataset.json()
+    const result = await dataset.json()
+    cache = result
+    return result
   } catch (ex) {
     console.log(ex)
     return []
@@ -22,7 +29,7 @@ const fetchExposureLocations = async () => {
  * @param rawData Raw MoH dataset to parse
  * @returns Formatted Dataset, strictly typed
  */
-const reshapeData = (rawData: IExposureData): IReturnData => {
+export const reshapeData = (rawData: IExposureData): IReturnData => {
   // No locations listed
   if (!rawData?.features) {
     return {
