@@ -1,11 +1,13 @@
 import moment from 'moment'
+import { NzExposureLocations } from './GetExposureLocations'
 
 /**
  * Reshape the data into a more friendly format
  * @param rawData Raw MoH dataset to parse
  * @returns Formatted Dataset, strictly typed
  */
-export const reshapeNZData = (rawData: IExposureData): IReturnData => {
+export const reshapeNZData = (data: NzExposureLocations): IReturnData => {
+  const rawData = data.result
   // No locations listed
   if (!rawData?.features) {
     return {

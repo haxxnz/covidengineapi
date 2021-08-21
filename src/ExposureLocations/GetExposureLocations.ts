@@ -5,11 +5,31 @@ import { reshapeANZData, reshapeAUData, reshapeNZData } from './Helpers'
 let nzCache: any
 let auCache: any
 
+interface ExposureEventsResultItem {
+  eventId: string
+  notificationId: string
+  glnHash: string
+  start: string
+  end: string
+  systemNotificationBody: string
+  appBannerTitle: string
+  appBannerBody: string
+  appBannerLinkLabel: string
+  appBannerLinkUrl: string
+  appBannerRequestCallbackEnabled: string
+}
+
+export interface NzExposureLocations {
+  result: IExposureData
+  exposureEventsResult: {
+    items: ExposureEventsResultItem[]
+  }
+}
 /**
  * Fetches the Ministry of Health COVID-19 Exposure Sites
  * @returns Raw Exposure Data as JSON
  */
-export const getNZExposureLocations = async () => {
+export async function getNZExposureLocations(): Promise<NzExposureLocations> {
   if (nzCache) return nzCache
 
   try {
@@ -17,11 +37,15 @@ export const getNZExposureLocations = async () => {
       'https://raw.githubusercontent.com/minhealthnz/nz-covid-data/main/locations-of-interest/august-2021/locations-of-interest.geojson'
     )
     const result = await dataset.json()
-    nzCache = result
-    return result
+    const exposureEvents = await fetch(
+      'https://exposure-events.tracing.covid19.govt.nz/current-exposure-events.json'
+    )
+    const exposureEventsResult = await exposureEvents.json()
+    nzCache = { result, exposureEventsResult }
+    return { result, exposureEventsResult }
   } catch (ex) {
     console.log(ex)
-    return []
+    return { result: {}, exposureEventsResult: { items: [] } }
   }
 }
 
@@ -68,7 +92,7 @@ export const handleNZExposureLocations = async (
   req: Request,
   res: Response
 ) => {
-  const rawNZData: IExposureData = await getNZExposureLocations()
+  const rawNZData = await getNZExposureLocations()
   const nzData: IReturnData = reshapeNZData(rawNZData)
 
   return res.send(nzData)
@@ -82,7 +106,7 @@ export const handleANZExposureLocations = async (
   const rawAUData: Array<Array<any>> = await getAUExposureLocations()
   const auData: IReturnData = reshapeAUData(rawAUData)
 
-  const rawNZData: IExposureData = await getNZExposureLocations()
+  const rawNZData = await getNZExposureLocations()
   const nzData: IReturnData = reshapeNZData(rawNZData)
 
   const combined = reshapeANZData(nzData, auData)
