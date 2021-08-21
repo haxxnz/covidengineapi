@@ -3,6 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import { AkahuClient } from 'akahu'
 import getExposureLocations from './ExposureLocations/GetExposureLocations'
+import './checkLocations'
 require('dotenv').config()
 
 const app: Application = express()
