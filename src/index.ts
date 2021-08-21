@@ -6,9 +6,13 @@ import { AkahuClient, Paginated, Transaction } from 'akahu'
 import getExposureLocations from './ExposureLocations/GetExposureLocations'
 import './checkLocations'
 import { ensureConnectToDB } from './db'
+import multer from 'multer'
 
 const app: Application = express()
 const port = 3001
+
+const upload = multer()
+
 
 app.use(cors())
 app.use(morgan('dev'))
@@ -20,6 +24,10 @@ app.get('/', (req, res) => {
 })
 
 app.get('/locations', getExposureLocations)
+
+app.post('/uploadcsv',  upload.single('csv'), (req, res) => {
+  res.send(JSON.stringify(req.file?.buffer.toString(), null, 2))
+})
 
 const akahuOAuthRedirectUri = 'https://oauth.covidengine.ml/auth/akahu'
 
@@ -107,3 +115,4 @@ app.get('/auth/akahu', async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
+
