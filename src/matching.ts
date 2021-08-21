@@ -46,8 +46,8 @@ export function matchAlgorithm(
     location.start = start
     location.end = end
 
-    const start_minus_2_days = sub(start, { days: 2 })
-    const end_plus_2_days = add(end, { days: 2 })
+    const start_minus_0_days = sub(start, { days: 0 })
+    const end_plus_14_days = add(end, { days: 14 })
 
     const tokens = location.event.split(' ')
     const relevant = []
@@ -82,8 +82,8 @@ export function matchAlgorithm(
             }
             if (
               isWithinInterval(new Date(t.date), {
-                start: start_minus_2_days,
-                end: end_plus_2_days,
+                start: start_minus_0_days,
+                end: end_plus_14_days,
               })
             ) {
               location.transactions.push(t)
