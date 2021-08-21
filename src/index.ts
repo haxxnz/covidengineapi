@@ -56,37 +56,37 @@ app.get('/auth/akahu', async (req, res) => {
     const user = await akahu.users.get(access_token)
     const accounts = await akahu.accounts.list(access_token)
 
-    const all_transactions: Transaction[] = []
-
     const now = new Date()
     const two_weeks_ago = minusDaysFromNow(14)
 
-    for (const account of accounts) {
-      // since we're only getting 2 weeks unlikely we need to page
+    const all_transactions = await Promise.all(
+      accounts.flatMap(async (account) => {
+        const transactions_paged = []
+        let transactions: Paginated<Transaction>
+        let next: string | undefined
+        do {
+          transactions = await akahu.accounts.listTransactions(
+            access_token,
+            account._id,
+            {
+              start: two_weeks_ago.toISOString(),
+              end: now.toISOString(),
+              cursor: next,
+            }
+          )
 
-      let transactions: Paginated<Transaction>
-      let next: string | undefined
-      do {
-        transactions = await akahu.accounts.listTransactions(
-          access_token,
-          account._id,
-          {
-            start: two_weeks_ago.toISOString(),
-            end: now.toISOString(),
-            cursor: next,
+          // typing is broken here, next should be string | undefined but its string | null
+          if (!transactions.cursor.next) {
+            next = undefined
+          } else {
+            next = transactions.cursor.next
           }
-        )
 
-        // typing is broken here, next should be string | undefined but its string | null
-        if (!transactions.cursor.next) {
-          next = undefined
-        } else {
-          next = transactions.cursor.next
-        }
-
-        all_transactions.push(...transactions.items)
-      } while (transactions.cursor.next)
-    }
+          transactions_paged.push(...transactions.items)
+        } while (transactions.cursor.next)
+        return transactions_paged
+      })
+    )
 
     res.type('json').send(
       JSON.stringify(
