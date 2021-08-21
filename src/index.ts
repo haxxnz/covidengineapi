@@ -24,6 +24,12 @@ app.get('/locations', getExposureLocations)
 
 const akahuOAuthRedirectUri = 'https://oauth.covidengine.ml/auth/akahu'
 
+function minusDaysFromNow(days: number): Date {
+  const date = new Date()
+  date.setDate(date.getDate() - days)
+  return date
+}
+
 app.get('/auth/akahu', async (req, res) => {
   const { AKAHU_APP_TOKEN, AKAHU_APP_SECRET } = process.env
   const code = req.query.code
@@ -53,6 +59,9 @@ app.get('/auth/akahu', async (req, res) => {
 
     const all_transactions: Transaction[] = []
 
+    const now = new Date()
+    const two_weeks_ago = minusDaysFromNow(14)
+
     for (const account of accounts) {
       // since we're only getting 2 weeks unlikely we need to page
 
@@ -63,8 +72,8 @@ app.get('/auth/akahu', async (req, res) => {
           access_token,
           account._id,
           {
-            start: new Date().toISOString(),
-            end: new Date().toISOString(),
+            start: two_weeks_ago.toISOString(),
+            end: now.toISOString(),
             cursor: next,
           }
         )
