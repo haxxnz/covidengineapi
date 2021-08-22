@@ -56,6 +56,11 @@ app.get('/exposurelocations', async (req, res) => {
   res.send(JSON.stringify({ exposureLocations }))
 })
 
+app.get('/mylois', async (req, res) => {
+  const sessionUserId = req.query.sessionUserId
+  res.send(JSON.stringify({ lois: sessionUserIdsToLois[sessionUserId as string] }))
+})
+
 app.get('/locations', handleANZExposureLocations)
 app.get('/locations/nz', handleNZExposureLocations)
 app.get('/locations/au', handleAUExposureLocations)
