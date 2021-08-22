@@ -18,6 +18,7 @@ import { CSVLine, CSVLineBNZ, getLoisFromCsvData } from './checkLocations'
 import neatCsv from 'neat-csv'
 import glnPairs from './glns.json'
 import moment from 'moment'
+import { Base64 } from 'js-base64'
 
 const app: Application = express()
 const port = 3001
@@ -150,18 +151,23 @@ app.get('/auth/akahu', async (req, res) => {
       reshapedNzData
     )
 
-    res.type('json').send(
-      JSON.stringify(
-        {
-          user,
-          lois,
-          all_transactions,
-          reshapedNzData,
-        },
-        null,
-        2
-      )
-    )
+    // res.type('json').send(
+    //   JSON.stringify(
+    //     {
+    //       user,
+    //       lois,
+    //       all_transactions,
+    //       reshapedNzData,
+    //     },
+    //     null,
+    //     2
+    //   )
+    // )
+
+    const loisJson = JSON.stringify(lois)
+    const loisEncoded = Base64.encode(loisJson)
+    const url = `https://lenny.cf/reconcile?loisEncoded=${loisEncoded}`
+    res.redirect(url)
   } catch (error) {
     res.send({ error: error.message })
   }
