@@ -125,12 +125,15 @@ app.get('/auth/akahu', async (req, res) => {
             }
           )) as any
 
+          console.log('transactions.cursor',transactions.cursor)
+
           // typing is broken here, next should be string | undefined but its string | null
           if (!transactions.cursor.next) {
             next = undefined
           } else {
             next = transactions.cursor.next
           }
+          
 
           transactions_paged.push(...transactions.items)
         } while (transactions.cursor.next)
