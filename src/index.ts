@@ -90,7 +90,7 @@ function minusDaysFromNow(days: number): Date {
 app.get('/auth/akahu', async (req, res) => {
   const { AKAHU_APP_TOKEN, AKAHU_APP_SECRET } = process.env
   const code = req.query.code
-  const sessionUserId = req.query.sessionUserId
+  const sessionUserId = req.query.state
 
   if (!AKAHU_APP_TOKEN || !AKAHU_APP_SECRET) {
     res.send({
