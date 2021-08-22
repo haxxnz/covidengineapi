@@ -10,4 +10,4 @@
 
 Have you been scanning QR codes and monitoring public health notices? We thought so.. and that's why we are adding an extra layer of certainty. With Lenny, you can cross-reference your bank statements with public exposure times to prevent the spread of COVID-19.
 
-👉 Check out [Lenny](https://covidengine.ml)
+👉 Check out [Lenny](https://lenny.cf)
