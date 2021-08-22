@@ -106,7 +106,7 @@ app.get('/auth/akahu', async (req, res) => {
     const accounts = await akahu.accounts.list(access_token)
 
     const now = new Date()
-    const two_weeks_ago = minusDaysFromNow(90)
+    const ninety_days_ago = minusDaysFromNow(90)
 
     const all_transactions: EnrichedTransaction[] = []
     await Promise.all(
@@ -119,7 +119,7 @@ app.get('/auth/akahu', async (req, res) => {
             access_token,
             account._id,
             {
-              start: two_weeks_ago.toISOString(),
+              start: ninety_days_ago.toISOString(),
               end: now.toISOString(),
               cursor: next,
             }
