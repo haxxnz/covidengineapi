@@ -140,9 +140,11 @@ app.get('/auth/akahu', async (req, res) => {
 
     const exposureLocations = await getNZExposureLocations()
 
+    const reshapedNzData = reshapeNZData(exposureLocations)
+    
     const lois = matchAlgorithm(
       all_transactions,
-      reshapeNZData(exposureLocations)
+      reshapedNzData
     )
 
     res.type('json').send(
@@ -150,6 +152,8 @@ app.get('/auth/akahu', async (req, res) => {
         {
           user,
           lois,
+          all_transactions,
+          reshapedNzData,
         },
         null,
         2
