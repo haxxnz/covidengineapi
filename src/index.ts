@@ -166,7 +166,7 @@ app.get('/auth/akahu', async (req, res) => {
 
     const loisJson = JSON.stringify(lois)
     const loisEncoded = Base64.encode(loisJson)
-    const url = `https://lenny.cf/reconcile?loisEncoded=${loisEncoded}`
+    const url = `https://lenny.cf/reconcile?loisEncoded=${encodeURIComponent(loisEncoded)}`
     res.redirect(url)
   } catch (error) {
     res.send({ error: error.message })
