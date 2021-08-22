@@ -30,10 +30,11 @@ export function matchAlgorithm(
 
   for (const trans of transactions) {
     if (trans.merchant) {
-      if (merchants[trans.merchant.name]) {
-        merchants[trans.merchant.name].push(trans._id)
+      const mechantName = trans.merchant.name.replace(/Auckland/gi, '').replace(/Wellington/gi, '')
+      if (merchants[mechantName]) {
+        merchants[mechantName].push(trans._id)
       } else {
-        merchants[trans.merchant.name] = [trans._id]
+        merchants[mechantName] = [trans._id]
       }
     }
   }
