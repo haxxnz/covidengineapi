@@ -13,12 +13,15 @@ import {
   handleNZExposureLocations,
 } from './ExposureLocations/GetExposureLocations'
 import { reshapeNZData } from './ExposureLocations/Helpers'
-import { matchAlgorithm } from './matching'
+import { LOI, matchAlgorithm } from './matching'
 import { CSVLine, CSVLineBNZ, getLoisFromCsvData } from './checkLocations'
 import neatCsv from 'neat-csv'
 import glnPairs from './glns.json'
 import moment from 'moment'
 import { Base64 } from 'js-base64'
+
+// in-memory database
+let sessionUserIdsToLois: Record<string, LOI[]> = {}
 
 const app: Application = express()
 const port = 3001
@@ -82,6 +85,7 @@ function minusDaysFromNow(days: number): Date {
 app.get('/auth/akahu', async (req, res) => {
   const { AKAHU_APP_TOKEN, AKAHU_APP_SECRET } = process.env
   const code = req.query.code
+  const sessionUserId = req.query.sessionUserId
 
   if (!AKAHU_APP_TOKEN || !AKAHU_APP_SECRET) {
     res.send({
@@ -151,6 +155,8 @@ app.get('/auth/akahu', async (req, res) => {
       reshapedNzData
     )
 
+    sessionUserIdsToLois[sessionUserId as string] = lois
+
     // res.type('json').send(
     //   JSON.stringify(
     //     {
@@ -166,7 +172,7 @@ app.get('/auth/akahu', async (req, res) => {
 
     const loisJson = JSON.stringify(lois)
     const loisEncoded = Base64.encode(loisJson)
-    const url = `https://lenny.cf/reconcile?loisEncoded=${encodeURIComponent(loisEncoded)}`
+    const url = `https://lenny.cf/reconcile?fromAkahu=true`
     res.redirect(url)
   } catch (error) {
     res.send({ error: error.message })
