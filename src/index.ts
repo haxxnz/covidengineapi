@@ -16,6 +16,8 @@ import { reshapeNZData } from './ExposureLocations/Helpers'
 import { matchAlgorithm } from './matching'
 import { CSVLine, CSVLineBNZ, getLoisFromCsvData } from './checkLocations'
 import neatCsv from 'neat-csv'
+import glnPairs from './glns.json'
+import moment from 'moment'
 
 const app: Application = express()
 const port = 3001
@@ -29,6 +31,25 @@ app.get('/', (req, res) => {
   res.send(
     '<a href="https://oauth.akahu.io/?client_id=app_token_cksl325vd000109mjaenwgicd&response_type=code&redirect_uri=https://oauth.covidengine.ml/auth/akahu&scope=ENDURING_CONSENT">Login with Akahu</a>'
   )
+})
+
+app.get('/exposurelocations', async (req, res) => {
+  const { result, exposureEventsResult } = await getNZExposureLocations()
+  const exposureLocations = result.features?.map(feature => {
+    const event = feature.properties.Event
+    const location = feature.properties.Location
+    const id = feature.properties.id
+    const start = moment(feature.properties.Start, 'DD/MM/YYYY, hh:mm a').toDate()
+    const end = moment(feature.properties.End, 'DD/MM/YYYY, hh:mm a').toDate()
+
+    const glnHash = exposureEventsResult.items.find(item => {
+      return item.eventId.startsWith(id)
+    })?.glnHash
+    const gln = glnPairs.find(glnPair => glnPair.glnHash === glnHash)?.gln
+    return { id, event, start, end, location, gln }
+  })
+  
+  res.send(JSON.stringify({ exposureLocations }))
 })
 
 app.get('/locations', handleANZExposureLocations)
