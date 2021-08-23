@@ -1,6 +1,5 @@
 import moment from 'moment'
 import { NzExposureLocations } from './GetExposureLocations'
-// import glnPairs from '../glns.json'
 
 /**
  * Reshape the data into a more friendly format

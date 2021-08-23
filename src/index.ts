@@ -16,7 +16,6 @@ import { reshapeNZData } from './ExposureLocations/Helpers'
 import { LOI, matchAlgorithm } from './matching'
 import { CSVLine, CSVLineBNZ, getLoisFromCsvData } from './checkLocations'
 import neatCsv from 'neat-csv'
-// import glnPairs from './glns.json'
 import moment from 'moment'
 import { Base64 } from 'js-base64'
 
