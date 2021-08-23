@@ -29,7 +29,7 @@ export interface NzExposureLocations {
     items: ExposureEventsResultItem[]
   }
   glnPairs: GlnPair[]
-  glnLastUpdated: string
+  glnLastUpdatedAt: string
 }
 
 setInterval(() => {
@@ -58,20 +58,20 @@ export async function getNZExposureLocations(): Promise<NzExposureLocations> {
       'https://raw.githubusercontent.com/CovidEngine/reverseglnhashes/main/glnPairs.json'
     )
     const glnPairs: GlnPair[] = await glnPairsRes.json()
-    const glnLastUpdatedRes = await fetch(
+    const glnLastUpdatedAtRes = await fetch(
       'https://raw.githubusercontent.com/CovidEngine/reverseglnhashes/main/lastUpdatedAt.json'
     )
-    const glnLastUpdated: string = await glnLastUpdatedRes.json()
+    const glnLastUpdatedAt: string = await glnLastUpdatedAtRes.json()
 
-    nzCache = { result, exposureEventsResult, glnPairs, glnLastUpdated }
-    return { result, exposureEventsResult, glnPairs, glnLastUpdated }
+    nzCache = { result, exposureEventsResult, glnPairs, glnLastUpdatedAt }
+    return { result, exposureEventsResult, glnPairs, glnLastUpdatedAt }
   } catch (ex) {
     console.log(ex)
     return {
       result: {},
       exposureEventsResult: { items: [] },
       glnPairs: [],
-      glnLastUpdated: new Date(0).toISOString(),
+      glnLastUpdatedAt: new Date(0).toISOString(),
     }
   }
 }

@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/exposurelocations', async (req, res) => {
-  const { result, exposureEventsResult, glnPairs, glnLastUpdated } = await getNZExposureLocations()
+  const { result, exposureEventsResult, glnPairs, glnLastUpdatedAt } = await getNZExposureLocations()
   const exposureLocations = result.features?.map(feature => {
     const event = feature.properties.Event
     const location = feature.properties.Location
@@ -52,7 +52,7 @@ app.get('/exposurelocations', async (req, res) => {
     return { id, event, start, end, location, gln }
   })
   
-  res.send(JSON.stringify({ exposureLocations, glnLastUpdated }))
+  res.send(JSON.stringify({ exposureLocations, glnLastUpdatedAt }))
 })
 
 app.get('/mylois', async (req, res) => {
