@@ -31,6 +31,12 @@ export interface NzExposureLocations {
   glnPairs: GlnPair[]
   glnLastUpdated: string
 }
+
+setInterval(() => {
+  nzCache = undefined
+  console.log('nzCache cleared')
+}, 1000 * 60 * 10) // every 10 minutes
+
 /**
  * Fetches the Ministry of Health COVID-19 Exposure Sites
  * @returns Raw Exposure Data as JSON
