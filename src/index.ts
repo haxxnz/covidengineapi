@@ -16,7 +16,7 @@ import { reshapeNZData } from './ExposureLocations/Helpers'
 import { LOI, matchAlgorithm } from './matching'
 import { CSVLine, CSVLineBNZ, getLoisFromCsvData } from './checkLocations'
 import neatCsv from 'neat-csv'
-import glnPairs from './glns.json'
+// import glnPairs from './glns.json'
 import moment from 'moment'
 import { Base64 } from 'js-base64'
 
@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/exposurelocations', async (req, res) => {
-  const { result, exposureEventsResult } = await getNZExposureLocations()
+  const { result, exposureEventsResult, glnPairs, glnLastUpdated } = await getNZExposureLocations()
   const exposureLocations = result.features?.map(feature => {
     const event = feature.properties.Event
     const location = feature.properties.Location
@@ -53,7 +53,7 @@ app.get('/exposurelocations', async (req, res) => {
     return { id, event, start, end, location, gln }
   })
   
-  res.send(JSON.stringify({ exposureLocations }))
+  res.send(JSON.stringify({ exposureLocations, glnLastUpdated }))
 })
 
 app.get('/mylois', async (req, res) => {

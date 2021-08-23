@@ -19,11 +19,17 @@ interface ExposureEventsResultItem {
   appBannerRequestCallbackEnabled: string
 }
 
+interface GlnPair {
+  gln: string
+  glnHash: string
+}
 export interface NzExposureLocations {
   result: IExposureData
   exposureEventsResult: {
     items: ExposureEventsResultItem[]
   }
+  glnPairs: GlnPair[]
+  glnLastUpdated: string
 }
 /**
  * Fetches the Ministry of Health COVID-19 Exposure Sites
@@ -41,11 +47,26 @@ export async function getNZExposureLocations(): Promise<NzExposureLocations> {
       'https://exposure-events.tracing.covid19.govt.nz/current-exposure-events.json'
     )
     const exposureEventsResult = await exposureEvents.json()
+
+    const glnPairsRes = await fetch(
+      'https://raw.githubusercontent.com/CovidEngine/reverseglnhashes/main/glnPairs.json'
+    )
+    const glnPairs: GlnPair[] = await glnPairsRes.json()
+    const glnLastUpdatedRes = await fetch(
+      'https://raw.githubusercontent.com/CovidEngine/reverseglnhashes/main/lastUpdatedAt.json'
+    )
+    const glnLastUpdated: string = await glnLastUpdatedRes.json()
+
     nzCache = { result, exposureEventsResult }
-    return { result, exposureEventsResult }
+    return { result, exposureEventsResult, glnPairs, glnLastUpdated }
   } catch (ex) {
     console.log(ex)
-    return { result: {}, exposureEventsResult: { items: [] } }
+    return {
+      result: {},
+      exposureEventsResult: { items: [] },
+      glnPairs: [],
+      glnLastUpdated: new Date(0).toISOString(),
+    }
   }
 }
 

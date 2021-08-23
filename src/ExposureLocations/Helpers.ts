@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { NzExposureLocations } from './GetExposureLocations'
-import glnPairs from '../glns.json'
+// import glnPairs from '../glns.json'
 
 /**
  * Reshape the data into a more friendly format
@@ -9,6 +9,7 @@ import glnPairs from '../glns.json'
  */
 export const reshapeNZData = (nzExposureLocations: NzExposureLocations): IReturnData => {
   const rawData = nzExposureLocations.result
+  const glnPairs = nzExposureLocations.glnPairs
   // No locations listed
   if (!rawData?.features) {
     return {
