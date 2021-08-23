@@ -57,7 +57,7 @@ export async function getNZExposureLocations(): Promise<NzExposureLocations> {
     )
     const glnLastUpdated: string = await glnLastUpdatedRes.json()
 
-    nzCache = { result, exposureEventsResult }
+    nzCache = { result, exposureEventsResult, glnPairs, glnLastUpdated }
     return { result, exposureEventsResult, glnPairs, glnLastUpdated }
   } catch (ex) {
     console.log(ex)
