@@ -27,7 +27,7 @@ const port = 3001
 
 const upload = multer()
 
-app.use(cors())
+app.use(cors({origin: 'https://lenny.cf'}))
 app.use(morgan('dev'))
 ensureConnectToDB()
 app.get('/', (req, res) => {
