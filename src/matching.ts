@@ -1,6 +1,7 @@
 import { parse, isWithinInterval, sub, add } from 'date-fns'
 import { EnrichedTransaction } from 'akahu'
 import _ from 'lodash'
+import escapeStringRegexp from 'escape-string-regexp'
 
 export type LOI = {
   id: string
@@ -69,7 +70,7 @@ export function matchAlgorithm(
       if (!str) {
         continue
       }
-      const regexp = new RegExp(str + '.*', 'i')
+      const regexp = new RegExp(escapeStringRegexp(str) + '.*', 'i')
       for (const merch of Object.keys(merchants)) {
         const result = regexp.test(merch)
         if (result) {
