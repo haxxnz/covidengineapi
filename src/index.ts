@@ -27,6 +27,8 @@ const port = 3001
 
 const upload = multer()
 
+// @ts-ignore
+app.options('*', cors()); // include before other routes
 app.use(
   cors({
     origin: 'https://lenny.cf',
