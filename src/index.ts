@@ -27,7 +27,12 @@ const port = 3001
 
 const upload = multer()
 
-app.use(cors({origin: 'https://lenny.cf'}))
+app.use(
+  cors({
+    origin: 'https://lenny.cf',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  })
+)
 app.use(morgan('dev'))
 ensureConnectToDB()
 app.get('/', (req, res) => {
@@ -37,27 +42,35 @@ app.get('/', (req, res) => {
 })
 
 app.get('/exposurelocations', async (req, res) => {
-  const { result, exposureEventsResult, glnPairs, glnLastUpdatedAt } = await getNZExposureLocations()
-  const exposureLocations = result.features?.map(feature => {
+  const { result, exposureEventsResult, glnPairs, glnLastUpdatedAt } =
+    await getNZExposureLocations()
+  const exposureLocations = result.features?.map((feature) => {
     const event = feature.properties.Event
     const location = feature.properties.Location
     const id = feature.properties.id
-    const start = moment(feature.properties.Start, 'DD/MM/YYYY, hh:mm a').toDate()
+    const start = moment(
+      feature.properties.Start,
+      'DD/MM/YYYY, hh:mm a'
+    ).toDate()
     const end = moment(feature.properties.End, 'DD/MM/YYYY, hh:mm a').toDate()
 
-    const glnHash = exposureEventsResult.items.find(item => {
+    const glnHash = exposureEventsResult.items.find((item) => {
       return item.eventId.startsWith(id)
     })?.glnHash
-    const gln = glnPairs.find(glnPair => glnPair.glnHash === glnHash)?.gln
+    const gln = glnPairs.find((glnPair) => glnPair.glnHash === glnHash)?.gln
     return { id, event, start, end, location, gln }
   })
-  
+
   res.send(JSON.stringify({ exposureLocations, glnLastUpdatedAt }))
 })
 
 app.get('/mylois', async (req, res) => {
   const sessionUserId = req.query.sessionUserId
-  res.send(JSON.stringify({ lois: sessionUserIdsToLois[sessionUserId as string] || null }))
+  res.send(
+    JSON.stringify({
+      lois: sessionUserIdsToLois[sessionUserId as string] || null,
+    })
+  )
 })
 
 app.get('/locations', handleANZExposureLocations)
@@ -134,7 +147,7 @@ app.get('/auth/akahu', async (req, res) => {
             }
           )) as any
 
-          console.log('transactions.cursor',transactions.cursor)
+          console.log('transactions.cursor', transactions.cursor)
 
           // typing is broken here, next should be string | undefined but its string | null
           if (!transactions.cursor.next) {
@@ -142,7 +155,6 @@ app.get('/auth/akahu', async (req, res) => {
           } else {
             next = transactions.cursor.next
           }
-          
 
           transactions_paged.push(...transactions.items)
         } while (transactions.cursor.next)
@@ -153,11 +165,8 @@ app.get('/auth/akahu', async (req, res) => {
     const exposureLocations = await getNZExposureLocations()
 
     const reshapedNzData = reshapeNZData(exposureLocations)
-    
-    const lois = matchAlgorithm(
-      all_transactions,
-      reshapedNzData
-    )
+
+    const lois = matchAlgorithm(all_transactions, reshapedNzData)
 
     sessionUserIdsToLois[sessionUserId as string] = lois
 
