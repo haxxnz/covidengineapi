@@ -31,6 +31,7 @@ app.use(
   cors({
     origin: 'https://lenny.cf',
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    optionsSuccessStatus: 200,
   })
 )
 app.use(morgan('dev'))
