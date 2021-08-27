@@ -100,8 +100,8 @@ export const reshapeAUData = (rawData: Array<Array<any>>) => {
 
 export const reshapeANZData = (nzData: IReturnData, auData: IReturnData) => {
   let nzReshape = nzData?.locations?.map((loc: ILocation) => {
-    let parsedStart = moment(loc.start, 'DD/MM/YYYY, hh:mm a').toDate()
-    let parsedEnd = moment(loc.end, 'DD/MM/YYYY, hh:mm a').toDate()
+    let parsedStart = moment(loc.start + " +12:00", 'DD/MM/YYYY, hh:mm a ZZ').toDate()
+    let parsedEnd = moment(loc.end + " +12:00", 'DD/MM/YYYY, hh:mm a ZZ').toDate()
 
     let data: IMergedLocation = {
       id: loc.id,

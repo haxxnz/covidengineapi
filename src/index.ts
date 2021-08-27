@@ -42,8 +42,8 @@ app.get('/exposurelocations', async (req, res) => {
     const event = feature.properties.Event
     const location = feature.properties.Location
     const id = feature.properties.id
-    const start = moment(feature.properties.Start, 'DD/MM/YYYY, hh:mm a').toDate()
-    const end = moment(feature.properties.End, 'DD/MM/YYYY, hh:mm a').toDate()
+    const start = moment(feature.properties.Start + " +12:00", 'DD/MM/YYYY, hh:mm a ZZ').toDate()
+    const end = moment(feature.properties.End + " +12:00", 'DD/MM/YYYY, hh:mm a ZZ').toDate()
 
     const glnHash = exposureEventsResult.items.find(item => {
       return item.eventId.startsWith(id)
